@@ -12,18 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppUserDetailsService implements UserDetailsService {
-    private final AppUserRepository appUserRepository;
+  private final AppUserRepository appUserRepository;
 
-    public AppUserDetailsService(AppUserRepository appUserRepository) {
-        this.appUserRepository = appUserRepository;
-    }
+  public AppUserDetailsService(AppUserRepository appUserRepository) {
+    this.appUserRepository = appUserRepository;
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) {
-        AppUser user = appUserRepository
-                .findByUsername(username.strip().toLowerCase(Locale.ROOT))
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
-        return new AppUserPrincipal(user);
-    }
+  @Override
+  @Transactional(readOnly = true)
+  public UserDetails loadUserByUsername(String username) {
+    AppUser user =
+        appUserRepository
+            .findByUsername(username.strip().toLowerCase(Locale.ROOT))
+            .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
+    return new AppUserPrincipal(user);
+  }
 }
