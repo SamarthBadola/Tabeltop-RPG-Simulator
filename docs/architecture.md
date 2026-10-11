@@ -136,7 +136,7 @@ Note the change from v1: **`ENG` no longer points at the port.** The application
 ### Package structure (by feature, boundaries enforced)
 
 ```
-com.yourteam.rpg
+com.github.sbadolankaur.rpg
 ├── engine/           // PURE rules. Imports only the JDK. No Spring, JPA or HTTP.
 │   ├── kernel/       // Ability, AbilityScores, Stat, Modifier, Resource, SlotPool, GameClock, Audience
 │   ├── dice/         // DiceExpression, parser, RandomSource
@@ -805,7 +805,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
       - name: Compile, unit and architecture tests
         working-directory: app
@@ -819,7 +819,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
       - name: Integration tests (Testcontainers needs Docker, available on ubuntu-latest)
         working-directory: app
@@ -845,7 +845,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
           cache: maven
       - name: Build pathfinder image
         run: docker build -t pathfinder:ci pathfinder

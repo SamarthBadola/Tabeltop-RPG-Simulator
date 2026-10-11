@@ -39,7 +39,7 @@ Read this first. It tells an AI coding assistant what the project is, what is al
 
 | Layer | Choice | Notes |
 | --- | --- | --- |
-| Language | Java 21 (LTS, Temurin) | The newest LTS is acceptable if the toolchain supports it; record the choice. |
+| Language | Java 25 (LTS, Temurin) | Selected for this project; the exact local runtime and build baseline are recorded in `docs/DECISION-LOG.md`. |
 | Build | Maven with wrapper | Profiles `integration` and `contract`. Unit tests `*Test`, integration `*IT`. |
 | Framework | Spring Boot (newest stable) | Web MVC, Validation, Security, Data JPA, Actuator. |
 | Views | Thymeleaf plus HTMX | Self-hosted `htmx.js`, no CDN, no SPA. Controllers return HTML fragments for interactive actions. |
@@ -80,7 +80,7 @@ rpg/
   LICENSE, README.md
 ```
 
-The group id and root package are a placeholder (`com.yourteam.rpg`). Ask the human for the real one before creating the project.
+The team has selected Maven `groupId` `com.github.sbadolankaur`, Maven `artifactId` `tabletop-rpg-simulator`, and Java root package `com.github.sbadolankaur.rpg`. Use these identifiers when generating the Maven project.
 
 ## 5. Architecture the code must follow
 
@@ -357,7 +357,7 @@ public interface Pathfinder {
 
 ### 9.1 Prerequisites
 
-JDK 21, Git, Docker with Compose v2 and buildx. CMake and a C++17 compiler only if you work on the pathfinder.
+JDK 25, Git, Docker with Compose and Buildx. CMake and a C++17 compiler only if you work on the pathfinder.
 
 ### 9.2 First run and dev loop
 
@@ -460,7 +460,7 @@ Publishing `8080:8080` exposes the app on all interfaces so LAN players can reac
 
 ```
 # app/Dockerfile
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /src
 COPY .mvn .mvn
 COPY mvnw pom.xml ./
@@ -468,7 +468,7 @@ RUN ./mvnw -B -ntp dependency:go-offline
 COPY src src
 RUN ./mvnw -B -ntp -DskipTests package
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 RUN useradd --system --uid 10001 app
 WORKDIR /app
 COPY --from=build /src/target/*.jar app.jar
@@ -531,7 +531,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: {distribution: temurin, java-version: '21', cache: maven}
+        with: {distribution: temurin, java-version: '25', cache: maven}
       - run: ./mvnw -B -ntp spotless:check test
         working-directory: app
   integration:
@@ -540,7 +540,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: {distribution: temurin, java-version: '21', cache: maven}
+        with: {distribution: temurin, java-version: '25', cache: maven}
       - run: ./mvnw -B -ntp verify -Pintegration
         working-directory: app
   pathfinder:
@@ -559,7 +559,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
-        with: {distribution: temurin, java-version: '21', cache: maven}
+        with: {distribution: temurin, java-version: '25', cache: maven}
       - run: docker build -t pathfinder:ci pathfinder
       - run: ./mvnw -B -ntp verify -Pcontract -Dpathfinder.image=pathfinder:ci
         working-directory: app
@@ -617,7 +617,7 @@ Every bug fix starts with a failing regression test. Do not test getters or fram
 
 ## 12. Build order
 
-**Step 0, from the human before coding:** repository name, group id and root package; GitHub owner for GHCR; chosen Java and Spring Boot versions; the SRD 5.1 attribution text (copied verbatim from the SRD) for `NOTICE`.
+**Step 0, project-specific baseline (identifiers and core versions now recorded):** the repository is `SamarthBadola/Tabletop-RPG-Simulator`, owned by `SamarthBadola`; Maven coordinates and the Java root package are listed in this brief and `docs/DECISION-LOG.md`. Before publishing more project content, confirm whether the repository should remain public, select the project's own-code license, and copy the required SRD 5.1 attribution text verbatim from the authoritative SRD source into `NOTICE`.
 
 **Step 1, walking skeleton.** Maven project with wrapper; Spring Boot app with health endpoints; PostgreSQL via Compose; Flyway baseline; register and login (the first user is the instance admin); Dockerfile; compose file; CI with the required checks; README quick start. *Done when:* a fresh clone runs `init-env.sh` then `docker compose up`, the first account registers at `http://localhost:8080`, and CI is green on the pull request.
 

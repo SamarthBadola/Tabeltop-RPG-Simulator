@@ -1,29 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: maven
-    directory: /app
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies
-      - java
-
-  - package-ecosystem: docker
-    directory: /app
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies
-      - docker
-
-  - package-ecosystem: docker
-    directory: /pathfinder
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies
-      - docker
-
+  # Add the Maven ecosystem after app/pom.xml is committed.
+  # Add Docker ecosystem entries after each corresponding Dockerfile exists.
   - package-ecosystem: github-actions
     directory: /
     schedule:
