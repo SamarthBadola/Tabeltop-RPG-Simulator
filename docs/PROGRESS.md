@@ -10,11 +10,15 @@
 - [x] Add weekly Dependabot configuration for GitHub Actions.
 - [x] Merge the repository-bootstrap pull request.
 - [x] Verify bootstrap CI passed on the pull request and on `main`.
-- [ ] Confirm GitHub Actions with read-only default permissions and protect `main` with the available bootstrap status checks.
+- [x] Confirm GitHub Actions uses read-only repository permissions for the bootstrap workflow.
+- [ ] Activate and verify both `main-quality-gates` and `main-update-access` rulesets in GitHub Settings; keep the quality-gates ruleset without bypass permissions.
 - [x] Record Java 25, Spring Boot 4.1.1, Maven 3.10.0, PostgreSQL 16.15, and local Git/Docker/Compose/Buildx versions.
 - [x] Confirm repository name `SamarthBadola/Tabletop-RPG-Simulator` and record Maven group ID, artifact ID, and Java root package.
 - [x] Verify the local Docker daemon, Compose plugin, Buildx, and Git versions.
-- [ ] Confirm whether public repository visibility is intentional; select the project's own-code license and add verbatim SRD 5.1 attribution.
+- [x] Keep the repository public and select Apache-2.0 for project-owned code/documentation.
+- [x] Add the required SRD 5.1 attribution verbatim to `README.md`.
+- [x] Add `.github/CODEOWNERS` assigning all files to `@SamarthBadola`.
+- [ ] Configure and verify the `main` branch ruleset in GitHub Settings; the repository policy and CODEOWNERS file alone do not enforce branch protections.
 - [ ] Build the walking skeleton: Maven wrapper, Spring Boot health endpoints, PostgreSQL/Flyway, Compose, app Dockerfile and pathfinder skeleton.
 - [ ] Add Maven Dependabot once `app/pom.xml` exists; add Docker Dependabot entries once the respective Dockerfiles exist.
 - [ ] Expand CI to unit, integration, pathfinder, contract, secrets and Compose smoke checks.
