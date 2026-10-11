@@ -14,7 +14,7 @@ Create short-lived branches from an up-to-date `main`:
 
 Do not commit directly to `main`. All proposed project changes must be submitted through a pull request. The repository maintainer, [@SamarthBadola](https://github.com/SamarthBadola), is the only person authorized to merge changes into `main`. Community contributors can use forks and submit pull requests without being granted write access to the repository.
 
-The GitHub branch ruleset must enforce this policy; see the repository branch protection settings before treating it as technically enforced.
+The GitHub branch rulesets must enforce this policy; follow [`docs/REPOSITORY-GOVERNANCE.md`](docs/REPOSITORY-GOVERNANCE.md) and do not treat it as technically enforced until both rulesets are Active.
 
 ## Project license and contribution terms
 
