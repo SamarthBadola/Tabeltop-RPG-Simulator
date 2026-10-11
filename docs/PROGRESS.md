@@ -18,6 +18,9 @@
 - [x] Keep the repository public and select Apache-2.0 for project-owned code/documentation.
 - [x] Add the required SRD 5.1 attribution verbatim to `README.md`.
 - [x] Add `.github/CODEOWNERS` assigning all files to `@SamarthBadola`.
+- [x] Document DCO sign-off and add `.github/dco.yml` configuration.
+- [ ] Install the DCO GitHub App for this repository and verify its status check on a pull request.
+- [ ] Add the DCO status check to the existing `main-quality-gates` ruleset; no additional ruleset is required.
 - [ ] Configure and verify the `main` branch ruleset in GitHub Settings; the repository policy and CODEOWNERS file alone do not enforce branch protections.
 - [ ] Build the walking skeleton: Maven wrapper, Spring Boot health endpoints, PostgreSQL/Flyway, Compose, app Dockerfile and pathfinder skeleton.
 - [ ] Add Maven Dependabot once `app/pom.xml` exists; add Docker Dependabot entries once the respective Dockerfiles exist.
