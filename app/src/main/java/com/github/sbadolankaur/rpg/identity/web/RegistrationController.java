@@ -16,47 +16,46 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class RegistrationController {
-    private final RegistrationService registrationService;
+  private final RegistrationService registrationService;
 
-    public RegistrationController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
+  public RegistrationController(RegistrationService registrationService) {
+    this.registrationService = registrationService;
+  }
+
+  @GetMapping("/register")
+  public String registerForm(Model model) {
+    model.addAttribute("form", new RegistrationForm());
+    model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
+    return "register";
+  }
+
+  @PostMapping("/register")
+  public String register(
+      @Valid @ModelAttribute("form") RegistrationForm form,
+      BindingResult result,
+      Model model,
+      HttpServletResponse response) {
+    if (result.hasErrors()) {
+      model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
+      return "register";
     }
 
-    @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("form", new RegistrationForm());
-        model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
-        return "register";
+    try {
+      registrationService.register(form.getUsername(), form.getDisplayName(), form.getPassword());
+    } catch (RegistrationClosedException exception) {
+      model.addAttribute("registrationOpen", false);
+      response.setStatus(HttpStatus.CONFLICT.value());
+      return "register";
+    } catch (DuplicateUsernameException exception) {
+      result.rejectValue("username", "username.duplicate", exception.getMessage());
+      model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
+      return "register";
+    } catch (PasswordTooLongException exception) {
+      result.jectValue("password", "password.tooLong", exception.getMessage());
+      model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
+      return "register";
     }
 
-    @PostMapping("/register")
-    public String register(
-            @Valid @ModelAttribute("form") RegistrationForm form,
-            BindingResult result,
-            Model model,
-            HttpServletResponse response) {
-        if (result.hasErrors()) {
-            model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
-            return "register";
-        }
-
-        try {
-            registrationService.register(
-                    form.getUsername(), form.getDisplayName(), form.getPassword());
-        } catch (RegistrationClosedException exception) {
-            model.addAttribute("registrationOpen", false);
-            response.setStatus(HttpStatus.CONFLICT.value());
-            return "register";
-        } catch (DuplicateUsernameException exception) {
-            result.rejectValue("username", "username.duplicate", exception.getMessage());
-            model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
-            return "register";
-        } catch (PasswordTooLongException exception) {
-            result.rejectValue("password", "password.tooLong", exception.getMessage());
-            model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
-            return "register";
-        }
-
-        return "redirect:/login?registered";
-    }
+    return "redirect:/login?registered";
+  }
 }
