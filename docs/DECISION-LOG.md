@@ -13,9 +13,9 @@ Record non-obvious choices here. A decision should state its status, context, ch
 | ADR-007 | Software license | Open | Select a license for the project's own code before adding a root `LICENSE`. This is separate from SRD content licensing. |
 | ADR-008 | SRD attribution | Open | Copy the required SRD 5.1 attribution notice verbatim from the authoritative SRD source into `NOTICE`; do not paraphrase or invent it. |
 | ADR-009 | Image publish/release flow | Open — document discrepancy | The build brief describes building/pushing version-tagged images on `v*`; architecture v4 says publish commit-SHA images on `main`, then promote/re-tag the same image for a version release. Prefer build-once/promote-same-digest, but confirm before enabling CD. |
-| ADR-010 | Java group ID / root package | Open | Replace `com.yourteam.rpg` placeholder with the team's real group ID and root package before generating the Maven project. |
-| ADR-011 | GitHub owner and repository name | Open | Repository currently exists as `SamarthBadola/Tabeltop-RPG-Simulator`; decide whether to correct the apparent spelling typo and whether the public visibility is intentional before publishing project content. |
-| ADR-012 | Developer container tooling | Accepted baseline | Local Docker CLI version reported as `29.7.2` (build `a7dcaa6`). Verify daemon/server version, Compose plugin, and Buildx with the commands in the setup checklist; don't install a separate Compose version if Docker Desktop/package manager already supplies the plugin. |
+| ADR-010 | Maven coordinates and Java root package | Accepted | Use Maven `groupId` `com.github.sbadolankaur`, `artifactId` `tabletop-rpg-simulator`, and Java root package `com.github.sbadolankaur.rpg`. Keep the artifact ID unchanged. |
+| ADR-011 | GitHub owner, repository name and visibility | In progress | The repository is `SamarthBadola/Tabletop-RPG-Simulator`; its current visibility is public. The name is confirmed; explicitly decide whether public visibility is intentional before adding further project content. |
+| ADR-012 | Developer tooling baseline | Accepted | Local versions reported by the project owner: Git `2.54.0.windows.1`; Temurin Java `25.0.4.1+1`; Docker Engine and CLI `29.8.2` (Linux engine, `desktop-linux` context); Docker Compose `5.5.1`; Docker Buildx `0.37.2`. The Docker daemon is running. Use the supplied Docker Desktop plugins; do not install separate Compose or Buildx versions. |
 
 ## Verified toolchain references (2026-10-11)
 
@@ -24,7 +24,10 @@ Record non-obvious choices here. A decision should state its status, context, ch
 - Maven: `3.10.0` for the Maven Wrapper distribution; current stable release with stricter POM validation.
 - PostgreSQL: `16.15`, the latest PostgreSQL 16 minor release verified for this baseline.
 - CMake: `4.4.4`, current stable version to use when local C++ pathfinder development begins. CMake/compiler are not needed for the Java-only walking-skeleton steps when using Docker for service builds.
-- Docker Compose and Buildx: use the plugin versions installed with the Docker distribution, then record the output of `docker compose version` and `docker buildx version`. No separate manual installation should be made until this is checked.
+- Git: `2.54.0.windows.1`, as reported locally.
+- Docker Engine and CLI: `29.8.2`; `docker info` confirms the Linux engine is running under Docker Desktop with context `desktop-linux`.
+- Docker Compose: `5.5.1`, supplied by Docker Desktop.
+- Docker Buildx: `0.37.2`, supplied by Docker Desktop; no separate manual installation is needed.
 
 ## Dependency/version policy
 
