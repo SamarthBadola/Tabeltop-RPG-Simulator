@@ -10,7 +10,8 @@
 - [x] Add weekly Dependabot configuration for GitHub Actions.
 - [x] Merge the repository-bootstrap pull request.
 - [x] Verify bootstrap CI passed on the pull request and on `main`.
-- [ ] Confirm GitHub Actions with read-only default permissions and protect `main` with the available bootstrap status checks.
+- [x] Confirm GitHub Actions uses read-only repository permissions for the bootstrap workflow.
+- [ ] Activate and verify the `main` branch ruleset in GitHub Settings so owner review and PR checks are enforced.
 - [x] Record Java 25, Spring Boot 4.1.1, Maven 3.10.0, PostgreSQL 16.15, and local Git/Docker/Compose/Buildx versions.
 - [x] Confirm repository name `SamarthBadola/Tabletop-RPG-Simulator` and record Maven group ID, artifact ID, and Java root package.
 - [x] Verify the local Docker daemon, Compose plugin, Buildx, and Git versions.
