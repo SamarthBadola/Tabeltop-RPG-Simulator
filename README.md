@@ -14,6 +14,12 @@ A self-hosted, browser-based tool for Dungeon Masters: character management and 
 - GitHub Actions for CI; GHCR for versioned container images
 - D&D 5e SRD 5.1 (2014 rules) only, with the required CC-BY-4.0 attribution
 
+## Maven and Java identifiers
+
+- Maven `groupId`: `com.github.sbadolankaur`
+- Maven `artifactId`: `tabletop-rpg-simulator`
+- Java root package: `com.github.sbadolankaur.rpg`
+
 See [`docs/architecture.md`](docs/architecture.md) for the architecture and [`docs/Tabletop RPG Simulator AI Build Brief.md`](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md) for implementation constraints and the build order. Exact toolchain choices and open decisions are recorded in [`docs/DECISION-LOG.md`](docs/DECISION-LOG.md).
 
 ## Current status
