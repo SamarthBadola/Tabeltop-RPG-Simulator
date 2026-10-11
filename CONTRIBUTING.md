@@ -24,6 +24,28 @@ By intentionally submitting a contribution for inclusion (including through a pu
 
 The Apache license applies to project-owned material, not automatically to SRD 5.1 content, external dependencies, or third-party assets. SRD material must remain properly attributed and used under its own CC-BY-4.0 terms. Do not add unlicensed D&D material or official artwork.
 
+## DCO sign-off
+
+The repository uses the Developer Certificate of Origin (DCO) to record that contributors have the right to submit their changes under the project's open-source license. The DCO check is provided by the [DCO GitHub App](https://github.com/apps/dco).
+
+Every commit from a non-owner contributor in a pull request must include a valid `Signed-off-by` trailer, and the trailer email must match that commit's author email. In your local Git configuration, set the name and email you intend to use for commits:
+
+```bash
+git config user.name "Your Name"
+git config user.email "the-email-used-for-your-commits"
+git commit -s -m "feat: describe your change"
+```
+
+The `-s` option adds the sign-off trailer to that commit. Check the result before pushing:
+
+```bash
+git show -s --format=%B HEAD
+```
+
+The commit message should end with a line like `Signed-off-by: Your Name <your-email@example.com>`. Repeat `git commit -s` for every commit you create. A pull request fails the DCO check if any applicable commit is missing a valid sign-off. If you have already made unsigned commits, amend or interactively rebase your own commits to add sign-offs before opening/updating the PR; do not sign off on work you are not authorized to certify.
+
+The repository configuration exempts the repository owner from sign-off on a personal repository; it does not exempt community contributors. DCO is a provenance and contribution-rights check, not a substitute for code review, tests, or security checks.
+
 ## Commit messages
 
 Use Conventional Commits:

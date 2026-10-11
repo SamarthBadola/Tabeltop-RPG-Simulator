@@ -1,0 +1,5 @@
+# This is a personal-user repository. The DCO App documents this setting
+# as exempting the repository owner from sign-off; outside contributors still
+# need matching Signed-off-by trailers on every applicable commit.
+require:
+  members: false
