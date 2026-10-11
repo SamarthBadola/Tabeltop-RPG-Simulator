@@ -14,32 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  format-preview:
-    name: format-preview
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Set up Java
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: "25"
-          cache: maven
-          cache-dependency-path: app/pom.xml
-      - name: Apply canonical Java formatting
-        working-directory: app
-        run: ./mvnw -B -ntp spotless:apply
-      - name: Publish formatted Java source for the authoring pass
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: formatted-java
-          path: |
-            app/src/main/java
-            app/src/test/java
-          if-no-files-found: error
-          retention-days: 1
-
   repo-hygiene:
     name: repo-hygiene
     runs-on: ubuntu-latest
