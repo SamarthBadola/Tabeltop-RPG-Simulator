@@ -1,0 +1,18 @@
+* text=auto eol=lf
+
+# Treat generated/binary assets as binary once added.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.jar binary
+*.class binary
+*.so binary
+*.dll binary
+*.dylib binary
+*.exe binary
