@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Set up · Tabletop RPG Simulator</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="panel">
+    <p class="eyebrow">TABLETOP RPG SIMULATOR</p>
+    <h1>Set up this instance</h1>
+    <p class="muted">The first account becomes the instance administrator.</p>
+
+    <div class="notice" role="status" th:unless="${registrationOpen}">
+        Initial registration is complete. Additional accounts will be enabled when the invite flow is implemented.
+    </div>
+
+    <form th:action="@{/register}" th:object="${form}" method="post" th:if="${registrationOpen}">
+        <label for="displayName">Display name</label>
+        <input id="displayName" th:field="*{displayName}" autocomplete="name" maxlength="80" required>
+        <p class="field-error" th:if="${#fields.hasErrors('displayName')}" th:errors="*{displayName}"></p>
+        <label for="username">Username</label>
+        <input id="username" th:field="*{username}" autocomplete="username" minlength="3" maxlength="50" required>
+        <p class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" minlength="12" maxlength="72" required>
+        <p class="hint">Use at least 12 characters. Passwords over 72 UTF-8 bytes are rejected.</p>
+        <p class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+        <button type="submit">Create administrator account</button>
+    </form>
+
+    <p class="footer-link"><a th:href="@{/login}">Already registered? Sign in</a></p>
+</main>
+</body>
+</html>

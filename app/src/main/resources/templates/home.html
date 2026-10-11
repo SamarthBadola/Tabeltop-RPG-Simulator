@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Workspace · Tabletop RPG Simulator</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="panel panel-wide">
+    <p class="eyebrow">TABLETOP RPG SIMULATOR</p>
+    <h1>Your workspace</h1>
+    <p class="muted">Signed in as <strong th:text="${user.displayName}">Player</strong> (<span th:text="${user.username}">username</span>).</p>
+    <div class="notice success" th:if="${user.instanceAdmin}">
+        Instance administrator account is ready.
+    </div>
+    <section class="next-step">
+        <h2>Walking skeleton is running</h2>
+        <p>Authentication, database migrations, and health checks are connected. Campaign and encounter features will be added in later milestones.</p>
+    </section>
+    <form th:action="@{/logout}" method="post">
+        <button class="secondary" type="submit">Sign out</button>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in · Tabletop RPG Simulator</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="panel">
+    <p class="eyebrow">TABLETOP RPG SIMULATOR</p>
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to continue to your campaign workspace.</p>
+
+    <p class="notice success" role="status" th:if="${param.registered}">Account created. Sign in to continue.</p>
+    <p class="notice" role="alert" th:if="${param.error}">Invalid username or password.</p>
+    <p class="notice" role="status" th:if="${param.logout}">You have been signed out.</p>
+    <p class="notice" role="alert" th:if="${param.throttled}">Too many failed attempts. Wait 15 minutes before trying again.</p>
+
+    <form th:action="@{/login}" method="post">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" maxlength="50" required autofocus>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Sign in</button>
+    </form>
+
+    <p class="footer-link"><a th:href="@{/register}">Set up this instance</a></p>
+</main>
+</body>
+</html>
