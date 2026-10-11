@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface InstanceStateRepository extends JpaRepository<InstanceState, Short> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select state from InstanceState state where state.id = :id")
-    Optional<InstanceState> lockById(@Param("id") Short id);
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  @Query("select state from InstanceState state where state.id = :id")
+  Optional<InstanceState> lockById(@Param("id") Short id);
 }

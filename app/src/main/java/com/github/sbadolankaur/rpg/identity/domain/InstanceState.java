@@ -8,20 +8,20 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "instance_state")
 public class InstanceState {
-    @Id
-    @Column(name = "id", nullable = false)
-    private Short id;
+  @Id
+  @Column(name = "id", nullable = false)
+  private Short id;
 
-    @Column(name = "initialized", nullable = false)
-    private boolean initialized;
+  @Column(name = "initialized", nullable = false)
+  private boolean initialized;
 
-    protected InstanceState() {}
+  protected InstanceState() {}
 
-    public boolean isInitialized() {
-        return initialized;
-    }
+  public boolean isInitialized() {
+    return initialized;
+  }
 
-    public void initialize() {
-        initialized = true;
-    }
+  public void initialize() {
+    initialized = true;
+  }
 }
