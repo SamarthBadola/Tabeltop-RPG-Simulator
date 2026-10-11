@@ -53,6 +53,7 @@ jobs:
           test -s 'docs/Tabletop RPG Simulator AI Build Brief.md'
           test -s docs/DECISION-LOG.md
           test -s docs/PROGRESS.md
+          test -s docs/REPOSITORY-GOVERNANCE.md
 
   secrets:
     name: secrets
