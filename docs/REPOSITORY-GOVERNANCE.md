@@ -17,7 +17,7 @@ In **Settings → Rules → Rulesets → New branch ruleset**:
 - Require **1 approving review**.
 - Dismiss stale approvals when new commits are pushed.
 - Require all conversations to be resolved.
-- Require status checks to pass: `repo-hygiene` and `secrets`.
+- Require status checks to pass: `repo-hygiene`, `secrets`, and the DCO App's status check (select the exact check context displayed by GitHub, typically `DCO`). Add the DCO check after installing the App and after it has reported a check on a pull request.
 - Require linear history.
 - Block force pushes and restrict deletion.
 - **Do not add a bypass actor** to this ruleset.
@@ -43,6 +43,16 @@ https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-
 
 `.github/CODEOWNERS` assigns the repository owner to all files so GitHub can request review. A code owner cannot approve their own pull request. If code-owner approval is later made mandatory, add Nihchal's verified GitHub username as a second code owner first, and confirm the rule works for PRs authored by either teammate. Do not guess the username.
 
+## DCO sign-off check
+
+1. Install the [DCO GitHub App](https://github.com/apps/dco) for `SamarthBadola/Tabletop-RPG-Simulator`. Grant it access to this repository only; review the App's permissions before installing.
+2. The repository contains `.github/dco.yml` with `require.members: false`. Because this is a personal repository, the DCO App documents this setting as allowing the repository owner to push commits without a sign-off. It does **not** exempt outside contributors.
+3. Open a test pull request. Confirm the DCO App reports a successful check for signed-off commits, and reports failure for a commit missing a matching `Signed-off-by` trailer.
+4. Edit the existing `main-quality-gates` ruleset and require that DCO check alongside `repo-hygiene` and `secrets`. Do **not** create another ruleset for DCO.
+5. Confirm the DCO status context is visible among required checks and that a failing DCO result prevents merging.
+
+The DCO App is a third-party GitHub App with its own terms and permissions. If you do not install it, the configuration file alone does not run the DCO check.
+
 ## Verify enforcement
 
 After creating both rulesets, confirm they show **Active** and target `main`. Test from a non-admin account or ask a teammate to verify:
@@ -53,4 +63,4 @@ After creating both rulesets, confirm they show **Active** and target `main`. Te
 4. A normal contributor cannot merge a PR or update `main`.
 5. The repository owner can merge a compliant PR but cannot bypass the quality gates.
 
-Until these checks have been made, treat the branch policy as documented but **not yet enforced**.
+You reported that both branch rulesets have been created and put into enforcement. Verify the direct-push and required-check behavior above, then add the DCO status check to the existing `main-quality-gates` ruleset after installing the App.
