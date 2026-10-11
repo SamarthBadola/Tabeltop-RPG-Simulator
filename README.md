@@ -14,6 +14,8 @@ A self-hosted, browser-based tool for Dungeon Masters: character management and 
 - GitHub Actions for CI; GHCR for versioned container images
 - D&D 5e SRD 5.1 (2014 rules) only, with the required CC-BY-4.0 attribution
 
+These are the project's chosen baseline versions, not evidence that application build files or services have already been implemented.
+
 ## Maven and Java identifiers
 
 - Maven `groupId`: `com.github.sbadolankaur`
@@ -28,11 +30,15 @@ Project-owned code and documentation are licensed under the Apache License, Vers
 
 This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
 
-See [`docs/architecture.md`](docs/architecture.md) for the architecture, [`docs/Tabletop RPG Simulator AI Build Brief.md`](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md) for implementation constraints and the build order, and [`docs/REPOSITORY-GOVERNANCE.md`](docs/REPOSITORY-GOVERNANCE.md) for the required `main` branch protection settings. Exact toolchain choices and decisions are recorded in [`docs/DECISION-LOG.md`](docs/DECISION-LOG.md).
+The same SRD attribution is recorded in [NOTICE](NOTICE). Do not add non-SRD official D&D text or artwork.
 
-## Current status
+## Project status
 
-Repository bootstrap complete. The bootstrap CI jobs have passed on the pull request and on `main`. Application and pathfinder source code have not been generated yet. The next implementation milestone is the walking skeleton: Spring Boot health endpoints, PostgreSQL + Flyway, authentication baseline, Docker Compose, and full CI checks.
+The repository bootstrap is complete: project decisions and tooling baselines are recorded, governance files are present, three GitHub rulesets are active, and the repository-hygiene and secret-scanning CI jobs pass. The DCO check also passed on PR #4.
+
+**The Step 1 walking skeleton has not been implemented yet.** The `app/`, `deploy/`, and `pathfinder/` directories currently contain README placeholders only. There is no runnable Spring Boot service, Maven project, Flyway migration, Dockerfile, Compose stack, or application smoke test yet.
+
+Before implementation, read [the AI handoff](docs/AI-HANDOFF.md), [the progress tracker](docs/PROGRESS.md), [the decision log](docs/DECISION-LOG.md), [repository governance](docs/REPOSITORY-GOVERNANCE.md), [the build brief](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md), and [architecture v4](docs/architecture.md).
 
 ## Non-negotiable engineering rules
 
@@ -45,4 +51,4 @@ Repository bootstrap complete. The bootstrap CI jobs have passed on the pull req
 
 ## Local setup
 
-The one-command setup will be documented when the Step 1 walking skeleton exists. Do not invent `.env` values or run an incomplete Compose stack yet.
+A runnable quick start will be documented once the Step 1 walking skeleton exists. A fresh clone cannot start the application yet; do not invent environment values or treat the placeholder Compose documentation as a working deployment.
