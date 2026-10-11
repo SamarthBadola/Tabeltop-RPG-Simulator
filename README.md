@@ -20,6 +20,14 @@ A self-hosted, browser-based tool for Dungeon Masters: character management and 
 - Maven `artifactId`: `tabletop-rpg-simulator`
 - Java root package: `com.github.sbadolankaur.rpg`
 
+## Licensing and third-party attribution
+
+Project-owned code and documentation are licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE). This license does not replace the separate license terms that apply to third-party components or SRD material.
+
+### SRD 5.1 attribution
+
+This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.
+
 See [`docs/architecture.md`](docs/architecture.md) for the architecture and [`docs/Tabletop RPG Simulator AI Build Brief.md`](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md) for implementation constraints and the build order. Exact toolchain choices and open decisions are recorded in [`docs/DECISION-LOG.md`](docs/DECISION-LOG.md).
 
 ## Current status
