@@ -1,0 +1,13 @@
+labels:
+  - name: dependencies
+    color: "0366d6"
+    description: "Automated dependency updates"
+  - name: java
+    color: "B07219"
+    description: "Java and JVM changes"
+  - name: docker
+    color: "2496ED"
+    description: "Container image and Docker tooling changes"
+  - name: ci
+    color: "5319E7"
+    description: "Continuous integration and workflow changes"
