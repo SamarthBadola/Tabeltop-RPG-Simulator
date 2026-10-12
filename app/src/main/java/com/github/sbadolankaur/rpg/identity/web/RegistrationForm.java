@@ -8,7 +8,7 @@ public class RegistrationForm {
   @NotBlank
   @Size(min = 3, max = 50)
   @Pattern(
-      regex = "^[A-Za-z0-9._-]+$",
+      regexp = "^[A-Za-z0-9._-]+$",
       message = "Use only letters, numbers, periods, underscores, and hyphens.")
   private String username;
 

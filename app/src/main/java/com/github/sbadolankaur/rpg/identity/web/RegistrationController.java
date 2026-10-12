@@ -51,7 +51,7 @@ public class RegistrationController {
       model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
       return "register";
     } catch (PasswordTooLongException exception) {
-      result.jectValue("password", "password.tooLong", exception.getMessage());
+      result.rejectValue("password", "password.tooLong", exception.getMessage());
       model.addAttribute("registrationOpen", registrationService.isRegistrationOpen());
       return "register";
     }
