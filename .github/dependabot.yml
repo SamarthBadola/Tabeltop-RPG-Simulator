@@ -18,7 +18,7 @@ updates:
       - dependency-name: eclipse-temurin
         update-types:
           - version-update:semver-major
-  - package-ecosystem: docker
+  - package-ecosystem: docker-compose
     directory: /deploy
     schedule:
       interval: weekly
