@@ -51,8 +51,6 @@ jobs:
           test -s SECURITY.md
           test -s .github/CODEOWNERS
           test -s .github/dco.yml
-          test -s .github/labels.yml
-          test -s .github/workflows/sync-repository-labels.yml
           test -s app/pom.xml
           test -s app/mvnw
           test -s app/.mvn/wrapper/maven-wrapper.properties
@@ -82,174 +80,21 @@ jobs:
             abort "Duplicate names in .github/labels.yml" unless names.uniq == names
 
             labels.each do |label|
-              abort "Invalid color for label #{label.fetch("name")}" unless label.fetch("color").match?(/\A[0-9a-fA-F]{6}\z/)
-              abort "Missing description for label #{label.fetch("name")}" unless label.fetch("description").is_a?(String) && !label.fetch("description").strip.empty?
+              color = label.fetch("color")
+              abort "Invalid color for label #{label.fetch("name")}" unless color.match?(/\A[0-9a-fA-F]{6}\z/)
+              description = label.fetch("description")
+              abort "Missing description for label #{label.fetch("name")}" unless description.is_a?(String) && !description.strip.empty?
             end
 
             referenced = dependabot.fetch("updates").flat_map { |update| Array(update["labels"]) }.uniq
             missing = referenced - names
             abort "Dependabot labels missing from .github/labels.yml: #{missing.join(", ")}" unless missing.empty?
-            puts "Dependabot label references match .github/labels.yml."
+            puts "Dependabot labels match .github/labels.yml."
           '
 
           grep -Fq '<java.version>25</java.version>' app/pom.xml
-          grep -Eq '^FROM eclipse-temurin:25\.[^[:space:]]+-jdk-noble AS build
-  unit:
-    name: unit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up Java
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: "25"
-          cache: maven
-          cache-dependency-path: app/pom.xml
-
-      - name: Check formatting and run unit tests
-        working-directory: app
-        run: ./mvnw -B -ntp spotless:check test
-
-  integration:
-    name: integration
-    needs: unit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up Java
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: "25"
-          cache: maven
-          cache-dependency-path: app/pom.xml
-
-      - name: Run PostgreSQL integration tests
-        working-directory: app
-        run: ./mvnw -B -ntp verify -Pintegration
-
-  secrets:
-    name: secrets
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out full history
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Scan for leaked secrets
-        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  compose-smoke:
-    needs: [integration]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Initialise local configuration
-        run: ./deploy/scripts/init-env.sh
-
-      - name: Build and start the stack
-        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env up --build -d
-
-      - name: Verify readiness, bootstrap registration and login
-        run: python3 deploy/scripts/smoke.py http://localhost:8080
-
-      - name: Show service logs after a failure
-        if: failure()
-        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env logs
-
-      - name: Stop stack and remove CI database
-        if: always()
-        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env down -v
- app/Dockerfile
-          grep -Eq '^FROM eclipse-temurin:25\.[^[:space:]]+-jre-noble
-  unit:
-    name: unit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up Java
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: "25"
-          cache: maven
-          cache-dependency-path: app/pom.xml
-
-      - name: Check formatting and run unit tests
-        working-directory: app
-        run: ./mvnw -B -ntp spotless:check test
-
-  integration:
-    name: integration
-    needs: unit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up Java
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
-        with:
-          distribution: temurin
-          java-version: "25"
-          cache: maven
-          cache-dependency-path: app/pom.xml
-
-      - name: Run PostgreSQL integration tests
-        working-directory: app
-        run: ./mvnw -B -ntp verify -Pintegration
-
-  secrets:
-    name: secrets
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out full history
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Scan for leaked secrets
-        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  compose-smoke:
-    if: github.ref == 'refs/heads/main'
-    needs: [integration]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Initialise local configuration
-        run: ./deploy/scripts/init-env.sh
-
-      - name: Build and start the stack
-        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env up --build -d
-
-      - name: Verify readiness, bootstrap registration and login
-        run: python3 deploy/scripts/smoke.py http://localhost:8080
-
-      - name: Show service logs after a failure
-        if: failure()
-        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env logs
-
-      - name: Stop stack and remove CI database
-        if: always()
-        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env down -v
- app/Dockerfile
+          grep -Eq '^FROM eclipse-temurin:25\.[^[:space:]]+-jdk-noble AS build$' app/Dockerfile
+          grep -Eq '^FROM eclipse-temurin:25\.[^[:space:]]+-jre-noble$' app/Dockerfile
           echo "Maven and Docker runtime baselines remain on Java 25."
 
   unit:
@@ -306,7 +151,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   compose-smoke:
-    if: github.ref == 'refs/heads/main'
     needs: [integration]
     runs-on: ubuntu-latest
     steps:
