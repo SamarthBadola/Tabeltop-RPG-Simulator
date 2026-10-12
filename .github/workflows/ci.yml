@@ -45,16 +45,66 @@ jobs:
           set -euo pipefail
           test -s README.md
           test -s LICENSE
+          test -s NOTICE
           test -s CONTRIBUTING.md
           test -s SECURITY.md
           test -s .github/CODEOWNERS
           test -s .github/dco.yml
+          test -s app/pom.xml
+          test -s app/mvnw
+          test -s app/.mvn/wrapper/maven-wrapper.properties
+          test -s app/Dockerfile
+          test -s deploy/docker-compose.yml
+          test -s deploy/docker-compose.build.yml
+          test -s deploy/.env.example
+          test -s deploy/scripts/init-env.sh
+          test -s deploy/scripts/smoke.py
           grep -Fq 'This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.' README.md
           test -s docs/architecture.md
           test -s 'docs/Tabletop RPG Simulator AI Build Brief.md'
           test -s docs/DECISION-LOG.md
           test -s docs/PROGRESS.md
+          test -s docs/AI-HANDOFF.md
           test -s docs/REPOSITORY-GOVERNANCE.md
+
+  unit:
+    name: unit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+          cache-dependency-path: app/pom.xml
+
+      - name: Check formatting and run unit tests
+        working-directory: app
+        run: ./mvnw -B -ntp spotless:check test
+
+  integration:
+    name: integration
+    needs: unit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Java
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+          cache-dependency-path: app/pom.xml
+
+      - name: Run PostgreSQL integration tests
+        working-directory: app
+        run: ./mvnw -B -ntp verify -Pintegration
 
   secrets:
     name: secrets
@@ -69,3 +119,28 @@ jobs:
         uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  compose-smoke:
+    if: github.ref == 'refs/heads/main'
+    needs: [integration]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Initialise local configuration
+        run: ./deploy/scripts/init-env.sh
+
+      - name: Build and start the stack
+        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env up --build -d
+
+      - name: Verify readiness, bootstrap registration and login
+        run: python3 deploy/scripts/smoke.py http://localhost:8080
+
+      - name: Show service logs after a failure
+        if: failure()
+        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env logs
+
+      - name: Stop stack and remove CI database
+        if: always()
+        run: docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env down -v

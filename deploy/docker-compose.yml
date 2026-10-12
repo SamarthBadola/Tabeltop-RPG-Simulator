@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:16.15
+    environment:
+      POSTGRES_DB: rpg
+      POSTGRES_USER: rpg
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?run deploy/scripts/init-env.sh first}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rpg -d rpg"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
+    restart: unless-stopped
+
+  app:
+    image: ghcr.io/samarthbadola/rpg-app:${RPG_VERSION:?set RPG_VERSION}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rpg
+      SPRING_DATASOURCE_USERNAME: rpg
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:?run deploy/scripts/init-env.sh first}
+      APP_COOKIE_SECURE: ${APP_COOKIE_SECURE:-false}
+      PATHFINDER_MODE: ${PATHFINDER_MODE:-java}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

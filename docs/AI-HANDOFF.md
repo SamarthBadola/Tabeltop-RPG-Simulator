@@ -1,82 +1,84 @@
 # AI and Contributor Handoff
 
-Last reconciled: 2026-10-12. This document is a durable snapshot of verified repository state and the next work boundary. Re-check live GitHub settings and current files before relying on details that can change.
+Last reconciled: 2026-10-12. This is the durable source of continuity for contributors and AI assistants. Re-check files, CI results, and live GitHub settings before relying on time-sensitive details.
 
 ## Read these sources first
 
-Before making code changes, read the following files from the current branch in this order:
+1. \`docs/AI-HANDOFF.md\` — this continuity snapshot and next task.
+2. \`docs/PROGRESS.md\` — milestone and acceptance checklist.
+3. \`docs/DECISION-LOG.md\` — accepted decisions and unresolved decisions.
+4. \`docs/REPOSITORY-GOVERNANCE.md\` — rulesets and verification gaps.
+5. \`docs/Tabletop RPG Simulator AI Build Brief.md\` — constraints, testing rules and build order.
+6. \`docs/architecture.md\` — architecture v4.
+7. \`README.md\`, \`CONTRIBUTING.md\`, \`SECURITY.md\`, \`NOTICE\`, \`LICENSE\` and \`.github/workflows/ci.yml\` as relevant.
 
-1. `docs/AI-HANDOFF.md` — this continuity snapshot and next task.
-2. `docs/PROGRESS.md` — milestone checklist and current implementation status.
-3. `docs/DECISION-LOG.md` — accepted decisions and unresolved decisions.
-4. `docs/REPOSITORY-GOVERNANCE.md` — live branch-ruleset snapshot, intended behavior, and outstanding verification.
-5. `docs/Tabletop RPG Simulator AI Build Brief.md` — detailed constraints, architecture rules, testing rules, and build order.
-6. `docs/architecture.md` — architecture v4; consult the relevant sections before implementation.
-7. `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `NOTICE`, `LICENSE`, and `.github/workflows/ci.yml` as relevant to the task.
-
-These documents complement one another. A more specific approved specification takes precedence over the high-level build brief. If source documents disagree or leave an implementation-critical choice unresolved, report the discrepancy and ask the human; do not silently choose a behavior or derive D&D mechanics from memory. Update the decision log and progress tracker in the same PR as the decision or implementation they describe.
+A more specific approved spec takes precedence over a high-level brief. When documents conflict or leave an implementation-critical choice open, describe the discrepancy and ask the human. Never silently invent D&D rules. Keep this handoff, the progress tracker and the decision log aligned.
 
 ## Project identity and fixed baseline
 
-- Repository: public GitHub repository `SamarthBadola/Tabletop-RPG-Simulator`.
-- Project: self-hosted, browser-based D&D 5e SRD 5.1 (2014 rules) character manager and encounter runner. It is not a virtual tabletop.
-- Team: two-person course project; the owner is the maintainer. Do not infer or invent teammate GitHub handles.
-- Maven `groupId`: `com.github.sbadolankaur`.
-- Maven `artifactId`: `tabletop-rpg-simulator`.
-- Java root package: `com.github.sbadolankaur.rpg`.
-- Chosen baseline: Temurin Java 25, Spring Boot 4.1.1, Maven Wrapper distribution 3.10.0, PostgreSQL 16.15 (PostgreSQL major 16).
-- Locally reported developer tooling: Git `2.54.0.windows.1`; Java `25.0.4.1+1`; Docker Engine/CLI `29.8.2`; Docker Compose `5.5.1`; Docker Buildx `0.37.2`. The owner reported the Linux Docker engine active under the `desktop-linux` context. These are reported local versions, not CI runner versions.
-- Project-owned code/docs use Apache-2.0. SRD 5.1 material has separate CC-BY-4.0 terms and attribution in `README.md` and `NOTICE`.
-- GitHub Actions and GHCR are the planned CI/CD and registry platforms. The current workflow only provides repository hygiene and secret scanning.
+- Repository: public \`SamarthBadola/Tabletop-RPG-Simulator\`.
+- Product: self-hosted browser-based D&D 5e SRD 5.1 (2014) character manager and encounter runner; not a virtual tabletop.
+- Two-person course project; owner is the maintainer. Do not guess the teammate's GitHub handle.
+- Maven \`groupId\`: \`com.github.sbadolankaur\`; \`artifactId\`: \`tabletop-rpg-simulator\`; Java root package \`com.github.sbadolankaur.rpg\`.
+- Selected baseline: Temurin Java 25, Spring Boot 4.1.1, Maven Wrapper 3.10.0, PostgreSQL 16.15.
+- Owner-reported local versions: Git \`2.54.0.windows.1\`, Java \`25.0.4.1+1\`, Docker Engine/CLI \`29.8.2\`, Compose \`5.5.1\`, Buildx \`0.37.2\`; Docker Desktop Linux engine with context \`desktop-linux\`.
+- Project-owned code/docs use Apache-2.0. SRD 5.1 material has separate CC-BY-4.0 terms, with attribution in \`README.md\` and \`NOTICE\`.
+- GitHub Actions and GHCR are intended CI/CD and registry tools. Release publishing is not implemented; ADR-009 is unresolved.
 
-## Verified current implementation status
+## Current implementation state
 
-**Repository bootstrap is complete; the Step 1 application walking skeleton is not started.**
+Repository bootstrap and documentation reconciliation are merged. The walking-skeleton implementation lives on \`feat/walking-skeleton\` and is under review until PR CI and runtime acceptance are verified.
 
-The current `main` contains repository policy/docs and README placeholders in `app/`, `deploy/`, and `pathfinder/`. There is currently no `app/pom.xml`, Maven Wrapper, Spring Boot source, Flyway migration, authentication flow, app/pathfinder Dockerfile, Compose file, environment initializer, or smoke test. Do not claim the application runs.
+The branch adds:
+- Maven project and wrapper targeting Java 25/Spring Boot 4.1.1/Maven 3.10.0.
+- Spring Boot service with Actuator health/readiness.
+- PostgreSQL configuration, Flyway initial schema and Hibernate schema validation.
+- Username/password registration/login, BCrypt, CSRF, HttpOnly/SameSite cookies, configurable Secure cookie flag, restrictive CSP and bounded login throttling.
+- Pessimistically locked first-account initialization state: the first successful registration becomes the instance administrator; later public registration is closed pending invitations.
+- Thymeleaf login, registration and authenticated landing pages.
+- App Dockerfile, PostgreSQL-only Compose deployment plus a source-build overlay, environment initializer and smoke test.
+- Unit tests and PostgreSQL Testcontainers integration tests.
+- CI jobs for repository hygiene, unit/format checks, PostgreSQL integration, secrets scan and main-only Compose smoke.
 
-Current CI workflow `.github/workflows/ci.yml` contains:
-- `repo-hygiene`: patch whitespace and repository-policy/documentation presence checks.
-- `secrets`: Gitleaks scan of repository history.
+**Do not claim the implementation is verified until checking the current PR's jobs.** The authoring environment used for the assistant lacks Java 25, Maven, Docker, and outbound network access, so a local application build has not been executed by the assistant. GitHub Actions is expected to validate the branch; inspect results and fix failures honestly.
 
-Both jobs passed on the latest recorded `main` run, [run #15](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38167905851). The DCO App check passed on [PR #4](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/pull/4). No app unit tests, integration tests, pathfinder tests, contract tests, Compose smoke tests, or release publishing are implemented/verified.
+## First-run instructions in the walking-skeleton branch
 
-## GitHub governance snapshot
+Use Bash (Git Bash or WSL on Windows) at the repository root:
 
-Three active repository rulesets target the default branch:
+\`\`\`bash
+./deploy/scripts/init-env.sh
+docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --env-file deploy/.env up --build -d
+\`\`\`
 
-- `main-quality-gates`: require PR; required approving-review count 0; require resolved conversations, linear history, deletion protection, non-fast-forward protection; require `repo-hygiene`, `secrets`, and `DCO`; bypass list empty.
-- `main-review-policy`: require PR and one approving review; dismiss stale approvals; Repository administrators have `For pull requests only` bypass. **Known cleanup:** this ruleset also contains deletion and non-fast-forward rules; remove them in GitHub Settings so it is review-only.
-- `main-update-access`: restrict updates and protect against deletion/non-fast-forward updates; Repository administrators have `Always allow` bypass in this access-only ruleset. This exception was used to resolve a protected-ref merge failure.
-
-The intent is for the no-bypass quality layer to prevent an administrator from bypassing CI/security requirements or pushing directly. The rulesets' Active state and required-check configuration have been verified via GitHub, but the rejection of direct pushes and all edge cases have not been empirically demonstrated. See `docs/REPOSITORY-GOVERNANCE.md` before changing settings.
+Open \`http://localhost:8080\` and create the first instance-admin account. Later open registration is closed until Step 4 introduces invites. Stop without deleting data using \`docker compose ... down\`; use \`down -v\` only when you intend to delete the database volume. Never commit \`deploy/.env\`.
 
 ## Non-negotiable engineering constraints
 
-- Do not implement D&D mechanics from memory. The ruleset specification is not yet written.
-- Until required specs exist, focus on infrastructure, dice engine foundations, kernel types, schemas, authentication, and CI in the order stated in the build brief.
-- Keep `engine` pure JDK: no Spring, JPA, HTTP, or filesystem I/O imports.
-- Preserve the specified layering and ArchUnit rules. Do not cross from one feature's web layer into another feature's persistence layer; avoid feature-package cycles.
-- Keep I/O outside database write transactions. Use additive Flyway migrations and never edit a migration that has been applied.
-- Security by default: deny-by-default routes, authorization at the data layer, input validation, CSRF protections, and no secrets in files/logs. Treat imports/uploads as untrusted.
-- Use tests that prove behavior. Never weaken/skip/rewrite tests to get green CI; report failures honestly.
-- Prefer existing dependencies and simple designs. Justify any new dependency and ask the human before introducing it.
-- Use exact pinned dependency/base-image versions, and verify APIs/versions against appropriate current documentation.
-- Use short-lived branches, Conventional Commits, PRs, and squash merges. Do not commit directly to `main`.
-- Keep progress/decision docs in sync with implementation; a checkbox is not proof unless its done-when was demonstrated.
+- Do not implement D&D mechanics from memory. The ruleset spec is not written.
+- Until specs exist, follow Steps 1–5 in the build brief.
+- Keep \`engine\` pure JDK: no Spring, JPA, HTTP, or filesystem I/O.
+- Enforce feature package boundaries and ArchUnit rules specified in architecture v4.
+- Keep I/O outside database write transactions; migrations are additive and applied migrations are immutable.
+- Security by default: deny-by-default routes except named public endpoints, data-layer authorization, form DTOs not JPA entities, CSRF, validation, no secrets in files/logs, uploads/imports untrusted.
+- Test behavior and negative cases; never weaken tests to get green.
+- Prefer minimal dependencies and simple designs. Keep code efficient; optimize only where the work is justified by the actual algorithm and use case.
+- Comment only where it adds information: public contracts, non-obvious constraints/reasons/invariants. Avoid redundant comments or a comment quota.
+- Pin tool/dependency/image versions; verify APIs/release details against primary docs.
+- Use short-lived branches, Conventional Commits, DCO sign-off, PRs and squash merges. Do not commit directly to \`main\`.
+- Update progress/decision docs alongside implementation; file existence alone does not prove done-when criteria.
 
-## Next sequence of work
+## Next implementation sequence
 
-The current task is the **repository-record reconciliation PR**. After it passes CI and is merged:
+1. Finish reviewing/validating the walking skeleton on \`feat/walking-skeleton\`.
+2. Wait for all applicable CI jobs to pass. The Compose smoke job is currently main-only. Add \`unit\` and \`integration\` to the live \`main-quality-gates\` required checks in GitHub Settings after those contexts appear; repository rulesets are not editable from the connected GitHub API.
+3. Merge the implementation PR only after the human has reviewed it and checks pass. Run a fresh-clone first-start test with Docker Desktop if needed.
+4. Update README, progress and handoff with actual test results.
+5. Only then begin Step 2 dice engine as a separate PR.
 
-1. Refresh the local/current checkout from `main`. Re-read this handoff and all source docs; do not assume the branch still matches if another PR has merged.
-2. Start one separate PR for **Step 1 — walking skeleton**. Keep its scope focused on a minimal, runnable Spring Boot + PostgreSQL/Flyway + auth + Docker Compose baseline, plus the required app CI.
-3. The Step 1 acceptance test from the build brief is the source of truth: on a fresh clone, run the environment initialization script, start Compose, register the first account at `http://localhost:8080`, and demonstrate green CI on the PR.
-4. Include meaningful tests and update `docs/PROGRESS.md`, `docs/DECISION-LOG.md`, and README status in the same implementation PR.
-5. Do not skip ahead to game mechanics or the later milestones until their prerequisite specs and previous-step acceptance tests are done.
+Stop after Step 5 and request the ruleset, content-schema, grid/geometry, and UX/API-with-threat-model specs before later gameplay features.
 
-## Open questions that must not be silently resolved
+## Unresolved choices
 
-- ADR-009: the build brief says publish version-tagged images on `v*`, while architecture v4 says build/publish images by commit SHA on `main` then promote the same digest to release tags. Ask the human before enabling CD; preferred direction is build once and promote the same digest.
-- Additional SRD content decisions remain for the appropriate future milestone: spell and monster subsets, surprise handling, DM override display, corner-cutting default, final upload limits, and journal event capture.
-- The ruleset specification, content schema specification, grid/geometry specification, and UX/API specification with threat model are not yet authored. Stop after build brief Step 5 and ask for these before continuing into the later feature milestones.
+- ADR-009: build brief says publish images on version tags; architecture v4 says publish commit-SHA images on main, then promote the same digest to release tags. Preferred direction is build once/promote same digest, but ask the human before enabling CD.
+- Future content decisions: spell/monster subsets, surprise handling, DM override display, corner-cutting, upload limits and journal event capture.
