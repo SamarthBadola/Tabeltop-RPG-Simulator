@@ -34,11 +34,13 @@ The attribution is also recorded in [NOTICE](NOTICE). Do not add non-SRD officia
 
 ## Current status
 
-The walking-skeleton implementation was merged in PR #6. The CI and repository-maintenance improvements were subsequently merged in PRs #9 and #10. The current CI workflow runs repository hygiene, formatting/unit tests, PostgreSQL integration tests, secret scanning, and a source-built Compose smoke test on pull requests and branch pushes. All five jobs passed on [PR CI run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [the post-merge `main` run #41](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012).
+The walking-skeleton implementation was merged in PR #6, followed by CI/governance maintenance in PRs #9, #10 and #12. CI runs repository hygiene, formatting/unit tests, PostgreSQL integration tests, secret scanning and source-built Compose smoke on pull requests and branch pushes. All five jobs passed on [PR #12 CI](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260399502) and [the post-merge `main` run](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260733720).
 
-Step 1 remains open until the project owner completes and records the fresh-clone, single-step startup test on Docker Desktop. The next implementation milestone is the dice engine; start it only after that acceptance test is complete and the progress and handoff records are reconciled.
+**Step 1 — walking skeleton is accepted.** On 2026-10-12, the project owner reported a successful laptop startup using the source-build Compose command: the app image built, PostgreSQL reported healthy, the application started, and first-account registration and sign-in succeeded.
 
-Before continuing, read [the AI handoff](docs/AI-HANDOFF.md), [the progress tracker](docs/PROGRESS.md), [the decision log](docs/DECISION-LOG.md), [repository governance](docs/REPOSITORY-GOVERNANCE.md), [the build brief](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md), and [architecture v4](docs/architecture.md).
+The first complete image build took approximately **198 seconds** on that laptop. This is the initial cold-build baseline, not yet a performance diagnosis. Build-time optimization is a tracked follow-up: measure cold and warm builds and identify the dominant costs before changing Docker layers, Maven dependency caching, image size or build-cache configuration.
+
+The next implementation milestone is Step 2, the dice engine. Read [the AI handoff](docs/AI-HANDOFF.md), [the progress tracker](docs/PROGRESS.md), [the decision log](docs/DECISION-LOG.md), [repository governance](docs/REPOSITORY-GOVERNANCE.md), [the build brief](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md), and [architecture v4](docs/architecture.md) before continuing.
 
 ## Local startup
 

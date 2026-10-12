@@ -27,7 +27,7 @@ A more specific approved spec takes precedence over a high-level brief. When doc
 
 ## Current implementation state
 
-The walking skeleton was merged in PR #6. CI/governance improvements were merged in PR #9, and the Dependabot Compose-ecosystem correction was merged in PR #10. The next acceptance item is a project-owner-run fresh-clone startup test on Docker Desktop; do not mark Step 1 complete until its outcome is recorded.
+The walking skeleton was merged in PR #6. CI/governance improvements were merged in PR #9, and the Dependabot Compose-ecosystem correction was merged in PR #10. Local first-start acceptance passed on 2026-10-12, as reported by the project owner. Step 1 was accepted on 2026-10-12 after the project owner reported a successful laptop source-build startup, healthy PostgreSQL, successful application startup, first-account registration and sign-in. The first image build took approximately 197.8 seconds. Track build-performance optimization as a follow-up and measure the actual bottlenecks before changing the build.
 
 The merged walking skeleton provides:
 
@@ -41,7 +41,7 @@ The merged walking skeleton provides:
 - Unit tests and PostgreSQL Testcontainers integration tests.
 - CI jobs for repository hygiene, unit/format checks, PostgreSQL integration, secrets scanning, and source-built Compose smoke on pull requests and branch pushes.
 
-CI evidence: [PR run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [post-merge `main` run #41](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012) passed all five GitHub Actions jobs. The live `main-quality-gates` ruleset additionally requires `DCO`, so six contexts are required for merging.
+CI evidence: [PR #12 run](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260399502) and [post-merge `main` run](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260733720) passed all five GitHub Actions jobs. The live `main-quality-gates` ruleset additionally requires `DCO`, so six contexts are required for merging.
 
 ## First-run instructions
 
@@ -71,10 +71,9 @@ Open \`http://localhost:8080\` and create the first instance-admin account. Late
 
 ## Next implementation sequence
 
-1. The project owner performs the fresh-clone first-start acceptance test on the laptop, following the README commands. Confirm that the environment initializer creates \`deploy/.env\`, the source-built Compose stack becomes healthy, and first-account registration plus login succeed.
-2. Record the observed result in \`docs/PROGRESS.md\`, this handoff, and the README. If startup fails, preserve the failing logs and diagnose the cause before marking Step 1 complete.
-3. After Step 1 acceptance is confirmed, begin Step 2 (dice engine) in a separate short-lived PR. Follow the dice grammar, limits and testing requirements in the build brief; do not invent D&D rules.
-4. Stop after Step 5 and request the ruleset, content-schema, grid/geometry, and UX/API-with-threat-model specifications before implementing later gameplay features.
+1. Begin Step 2 (dice engine) in a separate short-lived PR. Follow the grammar, limits and tests in the build brief; do not invent D&D rules.
+2. Keep first-build performance on the implementation checklist. Baseline: approximately 197.8 seconds for the first laptop Docker image build on 2026-10-12. Benchmark cold vs. warm builds, separate downloads from compilation/package and startup, then optimize cache layers and image/build performance based on evidence. Avoid speculative optimizations and preserve a reproducible clean-clone build.
+3. Stop after Step 5 and request the ruleset, content-schema, grid/geometry, and UX/API-with-threat-model specifications before implementing later gameplay features.
 
 ## Unresolved choices
 
