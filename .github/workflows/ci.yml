@@ -3,7 +3,8 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches:
+      - '**'
 
 permissions:
   contents: read
@@ -67,6 +68,35 @@ jobs:
           test -s docs/AI-HANDOFF.md
           test -s docs/REPOSITORY-GOVERNANCE.md
 
+      - name: Validate Dependabot labels and Java 25 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -ryaml -e '
+            dependabot = YAML.safe_load_file(".github/dependabot.yml", aliases: false)
+            manifest = YAML.safe_load_file(".github/labels.yml", aliases: false)
+            labels = manifest.fetch("labels")
+            names = labels.map { |label| label.fetch("name") }
+            abort "Duplicate names in .github/labels.yml" unless names.uniq == names
+
+            labels.each do |label|
+              color = label.fetch("color")
+              abort "Invalid color for label #{label.fetch("name")}" unless color.match?(/\A[0-9a-fA-F]{6}\z/)
+              description = label.fetch("description")
+              abort "Missing description for label #{label.fetch("name")}" unless description.is_a?(String) && !description.strip.empty?
+            end
+
+            referenced = dependabot.fetch("updates").flat_map { |update| Array(update["labels"]) }.uniq
+            missing = referenced - names
+            abort "Dependabot labels missing from .github/labels.yml: #{missing.join(", ")}" unless missing.empty?
+            puts "Dependabot labels match .github/labels.yml."
+          '
+
+          grep -Fq '<java.version>25</java.version>' app/pom.xml
+          grep -Eq '^FROM eclipse-temurin:25\.[^[:space:]]+-jdk-noble AS build$' app/Dockerfile
+          grep -Eq '^FROM eclipse-temurin:25\.[^[:space:]]+-jre-noble$' app/Dockerfile
+          echo "Maven and Docker runtime baselines remain on Java 25."
+
   unit:
     name: unit
     runs-on: ubuntu-latest
@@ -121,7 +151,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   compose-smoke:
-    if: github.ref == 'refs/heads/main'
     needs: [integration]
     runs-on: ubuntu-latest
     steps:

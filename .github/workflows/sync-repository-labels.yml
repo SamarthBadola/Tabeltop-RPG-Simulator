@@ -1,0 +1,55 @@
+name: Sync repository labels
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync-labels:
+    name: sync-labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Create or update labels from the manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -ryaml -e '
+            manifest = YAML.safe_load_file(".github/labels.yml", aliases: false)
+            manifest.fetch("labels").each do |label|
+              command = [
+                "gh", "label", "create", label.fetch("name"),
+                "--repo", ENV.fetch("GITHUB_REPOSITORY"),
+                "--color", label.fetch("color"),
+                "--description", label.fetch("description"),
+                "--force"
+              ]
+              abort "Failed to sync label #{label.fetch("name")}" unless system(*command)
+            end
+          '
+
+      - name: Verify labels exist in GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(ruby -ryaml -e 'YAML.safe_load_file(".github/labels.yml", aliases: false).fetch("labels").each { |label| puts label.fetch("name") }')"
+          actual="$(gh label list --repo "$GITHUB_REPOSITORY" --limit 1000 --json name --jq '.[].name')"
+          while IFS= read -r label; do
+            [[ -z "$label" ]] && continue
+            if ! grep -Fxq -- "$label" <<< "$actual"; then
+              echo "Repository label was not found after sync: $label" >&2
+              exit 1
+            fi
+          done <<< "$expected"
+          echo "All labels declared in .github/labels.yml exist in GitHub."
