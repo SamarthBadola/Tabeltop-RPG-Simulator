@@ -27,9 +27,10 @@ A more specific approved spec takes precedence over a high-level brief. When doc
 
 ## Current implementation state
 
-Repository bootstrap and documentation reconciliation are merged. The walking-skeleton implementation lives on \`feat/walking-skeleton\` and is under review until PR CI and runtime acceptance are verified.
+The walking skeleton was merged in PR #6. CI/governance improvements were merged in PR #9, and the Dependabot Compose-ecosystem correction was merged in PR #10. The next acceptance item is a project-owner-run fresh-clone startup test on Docker Desktop; do not mark Step 1 complete until its outcome is recorded.
 
-The branch adds:
+The merged walking skeleton provides:
+
 - Maven project and wrapper targeting Java 25/Spring Boot 4.1.1/Maven 3.10.0.
 - Spring Boot service with Actuator health/readiness.
 - PostgreSQL configuration, Flyway initial schema and Hibernate schema validation.
@@ -38,11 +39,11 @@ The branch adds:
 - Thymeleaf login, registration and authenticated landing pages.
 - App Dockerfile, PostgreSQL-only Compose deployment plus a source-build overlay, environment initializer and smoke test.
 - Unit tests and PostgreSQL Testcontainers integration tests.
-- CI jobs for repository hygiene, unit/format checks, PostgreSQL integration, secrets scan and main-only Compose smoke.
+- CI jobs for repository hygiene, unit/format checks, PostgreSQL integration, secrets scanning, and source-built Compose smoke on pull requests and branch pushes.
 
-**Do not claim the implementation is verified until checking the current PR's jobs.** The authoring environment used for the assistant lacks Java 25, Maven, Docker, and outbound network access, so a local application build has not been executed by the assistant. GitHub Actions is expected to validate the branch; inspect results and fix failures honestly.
+CI evidence: [PR run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [post-merge `main` run #41](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012) passed all five GitHub Actions jobs. The live `main-quality-gates` ruleset additionally requires `DCO`, so six contexts are required for merging.
 
-## First-run instructions in the walking-skeleton branch
+## First-run instructions
 
 Use Bash (Git Bash or WSL on Windows) at the repository root:
 
@@ -70,13 +71,10 @@ Open \`http://localhost:8080\` and create the first instance-admin account. Late
 
 ## Next implementation sequence
 
-1. Finish reviewing/validating the walking skeleton on \`feat/walking-skeleton\`.
-2. Wait for all applicable CI jobs to pass. The Compose smoke job is currently main-only. Add \`unit\` and \`integration\` to the live \`main-quality-gates\` required checks in GitHub Settings after those contexts appear; repository rulesets are not editable from the connected GitHub API.
-3. Merge the implementation PR only after the human has reviewed it and checks pass. Run a fresh-clone first-start test with Docker Desktop if needed.
-4. Update README, progress and handoff with actual test results.
-5. Only then begin Step 2 dice engine as a separate PR.
-
-Stop after Step 5 and request the ruleset, content-schema, grid/geometry, and UX/API-with-threat-model specs before later gameplay features.
+1. The project owner performs the fresh-clone first-start acceptance test on the laptop, following the README commands. Confirm that the environment initializer creates \`deploy/.env\`, the source-built Compose stack becomes healthy, and first-account registration plus login succeed.
+2. Record the observed result in \`docs/PROGRESS.md\`, this handoff, and the README. If startup fails, preserve the failing logs and diagnose the cause before marking Step 1 complete.
+3. After Step 1 acceptance is confirmed, begin Step 2 (dice engine) in a separate short-lived PR. Follow the dice grammar, limits and testing requirements in the build brief; do not invent D&D rules.
+4. Stop after Step 5 and request the ruleset, content-schema, grid/geometry, and UX/API-with-threat-model specifications before implementing later gameplay features.
 
 ## Unresolved choices
 

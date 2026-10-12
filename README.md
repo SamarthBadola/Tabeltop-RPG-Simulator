@@ -34,9 +34,11 @@ The attribution is also recorded in [NOTICE](NOTICE). Do not add non-SRD officia
 
 ## Current status
 
-The repository-bootstrap and record-reconciliation PRs are merged. The walking-skeleton implementation is now being developed on \`feat/walking-skeleton\` and is subject to CI review. It adds the Maven project, Spring Boot health/readiness, PostgreSQL/Flyway, the first-account admin registration flow, login, containers, integration tests, and smoke-test automation. Do not treat the milestone as complete until the build and fresh-clone acceptance test pass.
+The walking-skeleton implementation was merged in PR #6. The CI and repository-maintenance improvements were subsequently merged in PRs #9 and #10. The current CI workflow runs repository hygiene, formatting/unit tests, PostgreSQL integration tests, secret scanning, and a source-built Compose smoke test on pull requests and branch pushes. All five jobs passed on [PR CI run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [the post-merge `main` run #41](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012).
 
-The next milestone is the dice engine. Read [the AI handoff](docs/AI-HANDOFF.md), [the progress tracker](docs/PROGRESS.md), [the decision log](docs/DECISION-LOG.md), [repository governance](docs/REPOSITORY-GOVERNANCE.md), [the build brief](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md), and [architecture v4](docs/architecture.md) before continuing.
+Step 1 remains open until the project owner completes and records the fresh-clone, single-step startup test on Docker Desktop. The next implementation milestone is the dice engine; start it only after that acceptance test is complete and the progress and handoff records are reconciled.
+
+Before continuing, read [the AI handoff](docs/AI-HANDOFF.md), [the progress tracker](docs/PROGRESS.md), [the decision log](docs/DECISION-LOG.md), [repository governance](docs/REPOSITORY-GOVERNANCE.md), [the build brief](docs/Tabletop%20RPG%20Simulator%20AI%20Build%20Brief.md), and [architecture v4](docs/architecture.md).
 
 ## Local startup
 
