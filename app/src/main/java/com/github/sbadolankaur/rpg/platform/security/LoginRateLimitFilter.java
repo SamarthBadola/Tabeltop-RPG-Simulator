@@ -1,4 +1,5 @@
 package com.github.sbadolankaur.rpg.platform.security;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
