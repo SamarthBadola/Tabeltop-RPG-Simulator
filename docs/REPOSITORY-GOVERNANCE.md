@@ -14,7 +14,7 @@ The following three repository rulesets are active and target the default branch
 - Pull request required before merging.
 - Required approving-review count: **0**. Review count is intentionally separated into `main-review-policy`.
 - Require all review conversations to be resolved.
-- Required status checks: `repo-hygiene`, `secrets`, and `DCO`.
+- Required status checks: `repo-hygiene`, `secrets`, `DCO`, `unit`, `integration`, and `compose-smoke`.
 - Require linear history.
 - Restrict deletion and block force pushes.
 - Bypass list: **empty**; `current_user_can_bypass` is `never`.
@@ -29,8 +29,9 @@ This is the non-bypassable quality layer. The intended design is for these rules
 - Dismiss stale approvals when new commits are pushed.
 - Repository administrators bypass this ruleset **For pull requests only**.
 - No mandatory Code Owner approval; `require_code_owner_review` is disabled in the live configuration.
+- The live ruleset contains only the pull-request/review policy; deletion and non-fast-forward restrictions remain in the quality-gates/access rulesets.
 
-**Known cleanup:** the live ruleset also currently has deletion and non-fast-forward rules enabled. Remove those two rules in GitHub Settings so this ruleset contains only the pull-request/review policy. Keep deletion and non-fast-forward protections in the other rulesets. The intended exception is narrow: an administrator who authored a PR cannot approve it themselves, so they may bypass the review-only rule when merging their own PR; they must still satisfy `main-quality-gates`.
+The intended exception is narrow: an administrator who authored a PR cannot approve it themselves, so they may bypass the review-only rule when merging their own PR; they must still satisfy `main-quality-gates`.
 
 ### 3. `main-update-access`
 
@@ -68,21 +69,24 @@ Do not create a separate DCO ruleset. The status check belongs in the existing q
 
 ## CI checks currently available
 
-The active `.github/workflows/ci.yml` defines only:
-- `repo-hygiene`: checks patch whitespace and required repository documentation/policy files.
-- `secrets`: scans Git history with Gitleaks.
+The active `.github/workflows/ci.yml` defines five GitHub Actions jobs:
+- `repo-hygiene`: patch whitespace, required repository files, label manifest consistency and Java 25 baseline checks.
+- `unit`: Spotless formatting check and Maven unit tests.
+- `integration`: PostgreSQL Testcontainers integration tests.
+- `secrets`: Gitleaks scan of repository history.
+- `compose-smoke`: builds and starts the source-built Compose stack, then checks readiness, first-account registration and login.
 
-Both passed on [CI run #15 on `main`](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38167905851). The DCO check passed on [PR #4](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/pull/4).
+All five jobs passed on [PR run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [post-merge `main` run #41](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012). The smoke job runs for pull requests and branch pushes after `integration`; it is not main-only. The live `main-quality-gates` ruleset requires all five jobs plus `DCO`. The DCO App previously passed on [PR #4](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/pull/4).
 
-There is not yet an application build, test suite, PostgreSQL integration suite, C++ pathfinder suite, contract test, Compose smoke test, or release pipeline. Add new required status checks only when the corresponding workflow jobs exist and have reported a check.
+A C++ pathfinder test suite, Java/C++ contract test suite, and image-publishing/release pipeline are not implemented yet. Do not add required status checks for those future jobs until they exist and have reported checks.
 
 ## Verification checklist
 
 - [x] All three rulesets are Active and target the default branch.
 - [x] `main-quality-gates` has no bypass actors.
-- [x] `repo-hygiene`, `secrets`, and `DCO` are configured as required status checks.
+- [x] `repo-hygiene`, `secrets`, `DCO`, `unit`, `integration`, and `compose-smoke` are configured as required status checks.
 - [x] DCO check has passed on a pull request.
-- [ ] Remove deletion and non-fast-forward rules from `main-review-policy`.
+- [x] Remove deletion and non-fast-forward rules from `main-review-policy`; the live ruleset now contains only the pull-request/review policy.
 - [ ] From a non-admin test account, prove a direct push to `main` is rejected.
 - [ ] Prove a normal contributor PR cannot merge without an approval or a required check.
 - [ ] Prove an owner-authored PR can use the review-policy exception but cannot bypass failed quality checks.
