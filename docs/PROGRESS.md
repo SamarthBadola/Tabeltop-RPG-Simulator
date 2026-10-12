@@ -2,9 +2,9 @@
 
 Last reconciled: 2026-10-12.
 
-## Current milestone: Step 1 — walking skeleton (CI verified; local acceptance pending)
+## Current milestone: Step 2 — dice engine (walking skeleton accepted)
 
-The walking skeleton was merged in PR #6. CI and repository-maintenance improvements were merged in PRs #9 and #10. The five GitHub Actions CI jobs passed on both [PR run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [post-merge `main` run #41](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012). Keep Step 1 open until the project owner performs and records the fresh-clone startup test on Docker Desktop.
+Step 1 was accepted on 2026-10-12 after the project owner reported that the source-built Compose stack started successfully on a laptop, PostgreSQL became healthy, and first-account registration and sign-in succeeded. All five CI jobs passed on [PR #12 run](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260399502) and [post-merge `main` run](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260733720). The initial full image build took approximately 197.8 seconds; see the build-performance follow-up below.
 
 ### Completed repository bootstrap and governance
 
@@ -28,7 +28,7 @@ The walking skeleton was merged in PR #6. CI and repository-maintenance improvem
 
 ### Step 1 — walking skeleton
 
-The implementation is merged on \`main\`. CI verification is complete; the owner-run local first-start acceptance test remains pending.
+The implementation is merged on \`main\`. The project owner reported that the laptop startup test succeeded: the source-built app image built, the PostgreSQL container became healthy, the application started, and first-account registration and sign-in succeeded.
 
 - [x] Create the Maven project with fixed coordinates and the Maven Wrapper configuration.
 - [x] Create the Spring Boot app, login/registration controllers, and health/readiness configuration.
@@ -43,8 +43,8 @@ The implementation is merged on \`main\`. CI verification is complete; the owner
 - [x] Verify \`spotless:check test\` and \`verify -Pintegration\` pass in GitHub Actions on PR run #40 and post-merge run #41.
 - [x] Verify the Compose smoke job passes on PR run #40 and post-merge \`main\` run #41.
 - [x] Verify the active \`main-quality-gates\` ruleset requires \`repo-hygiene\`, \`secrets\`, \`DCO\`, \`unit\`, \`integration\`, and \`compose-smoke\`.
-- [ ] On a fresh clone, run environment initialization, start the source-built Compose stack, register the first account at \`http://localhost:8080\`, sign in, and record the outcome.
-- [ ] Reconcile this tracker and the README/handoff with the result of the local startup acceptance test. Do not mark Step 1 complete until the result is recorded.
+- [x] Run the laptop source-build Compose startup, confirm PostgreSQL healthy and the application started, and verify first-account registration and sign-in (project-owner report, 2026-10-12).
+- [x] Record the local acceptance result in the README, progress tracker and AI handoff.
 
 ### Step 2 — dice engine (after Step 1 is complete)
 
@@ -71,9 +71,21 @@ The implementation is merged on \`main\`. CI verification is complete; the owner
 
 ## CI status
 
-The active \`.github/workflows/ci.yml\` defines \`repo-hygiene\`, \`unit\`, \`integration\`, \`secrets\`, and \`compose-smoke\`. All five jobs passed on [PR run #40](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38251836058) and [post-merge run #41 on \`main\`](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38252435012). Compose smoke runs on pull requests and branch pushes after integration tests; it is not main-only. The live \`main-quality-gates\` ruleset requires all five jobs plus \`DCO\`.
+The active \`.github/workflows/ci.yml\` defines \`repo-hygiene\`, \`unit\`, \`integration\`, \`secrets\`, and \`compose-smoke\`. All five jobs passed on [PR #12 run](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260399502) and [post-merge run on \`main\`](https://github.com/SamarthBadola/Tabletop-RPG-Simulator/actions/runs/38260733720). Compose smoke runs on pull requests and branch pushes after integration tests; it is not main-only. The live \`main-quality-gates\` ruleset requires all five jobs plus \`DCO\`.
 
-The first Dependabot Compose scan succeeded after PR #10 changed the \`/deploy\` ecosystem to \`docker-compose\`. Dependabot then proposed PostgreSQL 18.6 in PR #11, but its source-built Compose smoke test failed because the PostgreSQL 18 image expects a different volume layout. A major-version ignore is being added for PostgreSQL in this maintenance PR. Do not merge PR #11 as-is.
+The `/deploy` Dependabot entry uses the \`docker-compose\` ecosystem and ignores PostgreSQL semver-major updates to preserve the PostgreSQL 16 baseline. PR #11's PostgreSQL 18.6 proposal was closed after its Compose smoke test failed on the changed volume layout.
+
+## Build-performance follow-up
+
+The first laptop source-build startup took approximately **197.8 seconds** for the initial image build. This is a single cold-build observation and includes image/dependency downloads; it is not a measured compiler-only duration.
+
+- [ ] Record separate cold-build and warm-rebuild timings with the same checkout and Docker environment.
+- [ ] Inspect BuildKit output to distinguish base-image pulls, Maven dependency resolution, compilation/package time, and image export.
+- [ ] Evaluate Maven dependency/cache layering and Docker/BuildKit cache reuse without sacrificing reproducibility or clean-clone builds.
+- [ ] Record image size and time-to-healthy/startup as separate metrics.
+- [ ] Re-measure after the dice engine and future service/ruleset layers are introduced, then implement only optimizations supported by the measurements.
+
+Treat this as a tracked quality improvement before the full stack grows substantially; it does not invalidate the accepted Step 1.
 
 ## Working agreement
 
